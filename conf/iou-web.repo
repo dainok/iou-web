@@ -1,0 +1,6 @@
+[iou-web]
+name=IOU Web Interface
+baseurl=http://public.routereflector.com/iou-web/yum
+enabled=1
+gpgcheck=1
+gpgkey=http://public.routereflector.com/iou-web/yum/RPM-GPG-KEY-iou-web

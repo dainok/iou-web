@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function connect {
+	/opt/iou/bin/shellinaboxd --cgi --localhost-only -s "/:$(id -u):$(id -g):HOME:telnet 127.0.0.1 ${parms}"
+	if [ $? -ne 0 ]; then
+		cannot_connect
+	fi
+}
+
+function default {
+	# First time that the CGI script was called. Show initial HTML page.
+	printf 'Content-Type: text/html\r\n\r\n'
+	cat << EOF
+<html>
+	<head>
+		<title>Telnet Shell</title>
+	</head>
+	<body>
+		<h1>Telnet Shell</h1>
+	</body>
+</html>	
+EOF
+}
+
+function cannot_connect {
+	printf 'Content-Type: text/html\r\n\r\n'
+	cat <<EOF
+<html>
+	<head>
+		<title>Telnet Shell</title>
+	</head>
+	<body>
+		<h1>Telnet Shell</h1>
+		<p>Unable to establish connection with $parms</p>
+	</body>
+</html>
+EOF
+}
+
+case "${REQUEST_METHOD}" in
+	GET)
+		# Retrieve CGI parameter, then start shellinabox with this address
+		parms=`echo $QUERY_STRING`
+		if [ "$parms" != "" ]; then
+			connect $parms
+		else
+			default
+		fi
+	;;
+	*)
+		default
+	;;
+esac  

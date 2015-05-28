@@ -1,0 +1,275 @@
+/*************************************************************************
+ * HTML Tag styles                                                       *
+ *************************************************************************/
+a:hover {
+	color: #ff9c08;
+}
+body {
+	background: #5f5f5f;
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 0.65em;
+}
+h1 {	
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 2.75em;
+}
+h1.bar {	
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.75em;
+	margin: 0px 0px 0px 0px;
+	padding: 5px 5px 5px 10px;
+}
+h2 {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 2.20em;
+	border-bottom: 2px solid #000000;
+}
+h2.main {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.75em;
+	border-bottom: 2px solid #000000;
+}
+h3 {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.7em;
+}
+h3.main {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.4em;
+}
+h4 {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.7em;
+}
+h5 {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.5em;
+}
+h6 {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.3em;
+}
+img.diagram {
+	margin: 0px 5px 15px 5px;
+	
+}
+img.inline {
+	vertical-align: middle;
+}
+li {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.05em;
+	letter-spacing: 1px;
+}
+p {
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.05em;
+	letter-spacing: 1px;
+}
+pre {
+	background-color: #f2f2f2;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 5px solid #000000;
+	font-family: 'Courier New', 'monospace';
+	font-size: 1.15em;
+	margin: 10px 20px 10px 20px;	
+	padding: 10px 15px 10px 15px;
+}
+table {
+	background: #ffffff;
+	border-collapse: collapse;
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.05em;
+	text-align: left;
+}
+table th {
+	border-bottom: 1px solid #000000;
+	color: #000000;
+	font-family: 'Arial', 'Helvetica', 'Verdana', 'sans-serif';
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 5px 4px;
+	text-align: center;
+}
+table td {
+	border-bottom: 1px solid #e8e8e8;
+	color: #000000;
+	padding: 3px 4px;
+}
+table tbody tr:hover td {
+	background-color: #e8e8e8;
+}
+/*************************************************************************
+ * Common classes                                                        *
+ *************************************************************************/
+.block {
+	/* Position and size */
+	margin: 10px 0px 0px 0px;
+}
+.block_first_column {
+	/* Position and size */
+	position: relative;
+	float: left;
+	left: 0px;
+	width: 32%;
+}
+.block_center_column {
+	/* Position and size */
+	position: relative;
+	float: left;
+	left: 1.75%;
+	width: 32%;
+}
+.block_last_column {
+	/* Position and size */
+	position: relative;
+	float: left;
+	left: 3.5%;
+	width: 32%;
+}
+.clear {
+	clear: both;
+}
+.help:hover {
+	cursor: help;
+	text-decoration: underline;
+}
+/*************************************************************************
+ * Menu                                                                  *
+ *************************************************************************/
+#menu ul, #menu ul li {
+	float: left;
+	list-style-type: none;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+#menu ul li {
+	padding: 0px 6px 0px 6px;
+	position: relative;
+}
+#menu ul li.first {
+	padding-left: 12px;
+}
+#menu ul li a {
+	color: #cccccc;
+	display: block;
+	font-size: 12px;
+	line-height: 22px;
+	margin: 0px 5px 0px 5px;
+	padding: 0px 2px 0px 2px;
+	text-decoration: none;
+}
+#menu ul li a:hover, #menu ul li.selected a {
+	color: #ffffff;
+	border-bottom: 2px solid #ff9c08;
+}
+#menu ul li.selected a {
+	font-weight: bold;
+}
+/*************************************************************************
+ * Folder list                                                           *
+ *************************************************************************/
+#list  ul {
+	list-style-type: none;
+	padding: 0px 0px 0px 0px;
+}
+#list ul li {
+	padding: 1px 15px 1px 15px;
+}
+#list  ul li:hover {
+	background-color: #e8e8e8;
+}
+#list ul li img {
+	margin: 0px 8px 0px 0px;
+	vertical-align: middle;
+}
+#list  ul  li a {
+	text-decoration: none;
+}
+#list  ul  li a:hover {
+	border: 0px 0px 0px 0px;
+	color: #000000;
+	text-decoration: none;
+}
+.button1 {
+	position: absolute;
+	right: 60px;
+}
+.button2 {
+	position: absolute;
+	right: 25px;
+}
+/*************************************************************************
+ * NETMAP                                                                *
+ *************************************************************************/
+.window {
+	border: 1px;
+	font-family: helvetica;
+	font-size: 0.8em;
+	position: fixed;
+	z-index: 20;
+	text-align: center;
+}
+.label {
+	font-family: helvetica;
+	font-size: 0.8em;
+}
+.window .name {
+	font-family: helvetica;
+	font-size: 1.2em;	
+	font-weight: bold;
+	position: relative;
+	top: -2px;
+}
+/*************************************************************************
+ * Countdown                                                             *
+ *************************************************************************/
+#countdown {
+	background-color: #000000;
+	color: #e8e8e8;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.7em;
+	position: absolute;
+	right: 15px;
+	top: 11px;
+}
+/*************************************************************************
+ * Others                                                                *
+ *************************************************************************/
+#lab_netmap {
+	font-family: 'Courier New', 'monospace';
+	font-size: 10pt;
+}
+#buttons {
+	position: relative;
+	float: right;
+}
+img.help {
+	vertical-align: top;
+}
+input.error { border: 1px solid red; }
+label {
+	width: 10em;
+	float: left;
+	font-weight: bold;
+}
+label.error {
+	float: none;
+	color: red;
+	padding-left: .5em;
+	vertical-align: top;
+}
+.ui-dialog {
+	position: fixed;
+}
+#current {
+	width: 57px;
+	height: 13px;
+	vertical-align: bottom;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+}

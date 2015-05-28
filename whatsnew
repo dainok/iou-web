@@ -1,0 +1,1 @@
+What's new: fixed custom configuration, fixed cgi for web console, fixed 0e/0s problem, fixed conf_pack problem, fixed premissions on revert, fixed visualization problem when encapsulation is used, removed broken context menu on first menu tab, added button to kill all device/cloud processes

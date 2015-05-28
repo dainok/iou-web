@@ -1,0 +1,12 @@
+Package: iou-web
+Version: %VERSION%-%RELEASE%
+Name: IOU WEB interface
+Description: IOU WEB interface
+Architecture: all
+Maintainer: Andrea Dainese <andrea.dainese@gmail.com>
+Homepage: http://www.routereflector.com/cisco/cisco-iou-web-interface/
+Installed-Size: 11828
+Section: devel
+Priority: optional
+Depends: apache2, php5, php5-pspell, libgv-php5, sqlite3, php5-sqlite, xdotool, php-pear, php5-gd, dos2unix, libpcap0.8
+Provides: iou-web

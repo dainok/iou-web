@@ -1,0 +1,166 @@
+#!/usr/bin/env python
+
+"""
+Python source code - replace this with a description of the code and write the code below this text.
+"""
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
+import os
+import netsnmp
+import sys
+import time
+import rrdtool
+
+snmp_hosts = ['10.0.0.1', '10.0.0.2', '10.0.0.3', '10.0.0.4', '10.0.0.5', '10.0.0.6'] 
+snmp_port = 161
+snmp_community = 'public'
+snmp_version = 2
+rrd_directory = '/opt/iou/data/Rrd/'
+interval = 10
+
+# Create an RRD file which stores IN and OUT data
+def create_io_rrd(rrd_file):
+    print 'Creating the rrd_file %s' %(rrd_file)
+    rc = rrdtool.create(rrd_file, "--step", "10", "--start", '0',
+        "DS:input:COUNTER:600:0:34359738360",
+        "DS:output:COUNTER:600:0:34359738360",
+        "RRA:AVERAGE:0.5:1:360",
+        "RRA:MIN:0.5:1:360",
+        "RRA:MAX:0.5:1:360",
+        "RRA:LAST:0.5:1:360")
+    if rc:
+        print rrdtool.error()
+        return False
+    else:
+        return None
+
+# Update the RRD file with IN and OUT data
+def update_io_rrd(rrd_file, ifInOctets, ifOutOctets):
+    print 'Updating the rrd_file %s' %(rrd_file)
+    rc = rrdtool.update(rrd_file, 'N:%s:%s' %(ifInOctets, ifOutOctets))
+    if rc:
+        print rrdtool.error()
+        return False
+    else:
+        return None
+
+# Create graph with IN and OUT data
+def create_io_graph(rrd_file, graph_file, ifDescr, sysname):
+    rc = rrdtool.graph(
+        graph_file,
+        '--start', '-30min',
+        '--vertical-label=traffic in bps',
+        '--title=%s - %s' %(sysname, ifDescr),
+        '--watermark=iou-web',
+        #'--upper-limit=10000000',
+        '--lower-limit=0',
+        #'-w 800',
+        'DEF:inoctets=%s:input:AVERAGE' %(rrd_file),
+        'DEF:outoctets=%s:output:AVERAGE' %(rrd_file),
+        'CDEF:inbits=inoctets,8,*',
+        'CDEF:outbits=outoctets,8,*',
+        'GPRINT:inbits:LAST:Last\: %6.2lf %Sbps ',
+        'LINE1:inbits#0000FF:IN \\r',
+        'GPRINT:outbits:LAST:Last\: %6.2lf %Sbps ',
+        'LINE2:outbits#00FF00:OUT\\r')
+    if rc:
+        print rrdtool.error()
+        return False
+    else:
+        return None
+
+# Monitor an host
+def monitor_host(snmp_host):
+    global interval, snmp_version, snmp_community, snmp_port
+    oid_ifIndex = '.1.3.6.1.2.1.2.2.1.1'
+    oid_ifDescr = '.1.3.6.1.2.1.2.2.1.2'
+    oid_ifType = '.1.3.6.1.2.1.2.2.1.3'
+    oid_ifInOctets = '.1.3.6.1.2.1.2.2.1.10'
+    oid_ifOutOctets = '.1.3.6.1.2.1.2.2.1.16'
+    oid_ifSpeed = '.1.3.6.1.2.1.2.2.1.5'
+    oid_ifAdminStatus = '.1.3.6.1.2.1.2.2.1.7'
+    oid_ifOperStatus = '.1.3.6.1.2.1.2.2.1.8'
+    ifActive = []
+    session = netsnmp.Session(Version = snmp_version, DestHost = snmp_host, Community = snmp_community, RemotePort = snmp_port)
+    for ifIndex in session.walk(netsnmp.VarList(netsnmp.Varbind(oid_ifIndex))):
+        ifDescr, ifType, ifSpeed, ifAdminStatus, ifOpetStatus = session.get(
+            netsnmp.VarList(
+                netsnmp.Varbind(oid_ifDescr, ifIndex),
+                netsnmp.Varbind(oid_ifType, ifIndex),
+                netsnmp.Varbind(oid_ifSpeed, ifIndex),
+                netsnmp.Varbind(oid_ifAdminStatus, ifIndex),
+                netsnmp.Varbind(oid_ifOperStatus, ifIndex)
+            )
+        )
+
+        # Skip interface if administratively DOWN
+        if ifAdminStatus == '2':
+            continue
+
+        # Skip interfacy by type: Other, softwareLoopback
+        if ifType == '1' or ifType == '24' or ifType == '1500':
+            continue
+
+        rrd_file = rrd_directory + snmp_host.replace('.', '_') + '_' + str(ifIndex) + '.rrd'
+        graph_file = rrd_directory + snmp_host.replace('.', '_') + '_' + str(ifIndex) + '.png'
+        ifActive.append([ifIndex, rrd_file, graph_file, ifDescr, ifSpeed])
+
+        # Create the RRD database if it does not exist
+        if not (os.path.isfile(rrd_file)):
+            create_io_rrd(rrd_file)
+
+    # Now monitor active interfaces only
+    while 1:
+        for ifCurrent in ifActive:
+            ifInOctets, ifOutOctets = session.get(
+                netsnmp.VarList(
+                    netsnmp.Varbind(oid_ifInOctets, ifCurrent[0]),
+                    netsnmp.Varbind(oid_ifOutOctets, ifCurrent[0])
+                )
+            )
+            print ifCurrent[1]
+            update_io_rrd(ifCurrent[1], ifInOctets, ifOutOctets)
+            create_io_graph(ifCurrent[1], ifCurrent[2], ifCurrent[3], snmp_host)
+        # Looping forever
+        time.sleep(interval)
+
+
+# COUNTER: is for continuous incrementing counters like the ifInOctets counter in a router. The COUNTER data source assumes that the counter never decreases, except when a counter overflows. The update function takes the overflow into account. The counter is stored as a per-second rate. When the counter overflows, RRDtool checks if the overflow happened at the 32bit or 64bit border and acts accordingly by adding an appropriate value to the result.
+# DERIVE: will store the derivative of the line going from the last to the current value of the data source. This can be useful for gauges, for example, to measure the rate of people entering or leaving a room. Internally, derive works exactly like COUNTER but without overflow checks. So if your counter does not reset at 32 or 64 bit you might want to use DERIVE and combine it with a MIN value of 0.
+# ABSOLUTE: is for counters which get reset upon reading. This is used for fast counters which tend to overflow.
+# COMPUTE: is for storing the result of a formula applied to other data sources in the RRD. This data source is not supplied a value on update, but rather its Primary Data Points (PDPs) are computed from the PDPs of the data sources according to the rpn-expression that defines the formula. 
+
+# RRA:CF:xff:steps:rows
+#   CF: AVERAGE, MIN, MAX, LAST
+#   xff: xfiles factor defines what part of a consolidation interval may be made up from *UNKNOWN* data while the consolidated value is still regarded as known.
+#        It is given as the ratio of allowed *UNKNOWN* PDPs to the number of PDPs in the interval. Thus, it ranges from 0 to 1 (exclusive).
+#   steps: defines how many of these primary data points are used to build a consolidated data point which then goes into the archive.
+#   rows: 17280 we store 1 day with 5 seconds step
+
+#The "heartbeat" defines the maximum acceptable interval between samples/updates. If the interval between samples is less than "heartbeat", then an average rate is calculated and applied for that interval. If the interval between samples is longer than "heartbeat", then that entire interval is considered "unknown". Note that there are other things that can make a sample interval "unknown", such as the rate exceeding limits, or a sample that was explicitly marked as unknown.
+
+
+
+
+# Checking if the directory exists
+try:
+    os.stat(rrd_directory)
+except:
+    os.mkdir(rrd_directory)
+
+children = []
+
+# Starting threads
+for snmp_host in snmp_hosts:
+    child = os.fork()
+    if child:
+        # I'm the father
+        children.append(child)
+    else:
+        # I'm the child
+        monitor_host(snmp_host)
+
+# Wait for all children to complete
+for child in children:
+    os.waitpid(child, 0)

@@ -1,0 +1,20 @@
+# PHP.ini
+php_value date.timezone Europe/Rome
+php_value post_max_size 200M
+php_value upload_max_filesize 180M
+php_value max_input_time 180
+php_value max_input_vars 5000
+php_value default_socket_timeout 3
+
+# The following are set under manage.php
+#php_value max_execution_time 180
+#php_value memory_limit 256M
+
+# supress php errors
+php_flag display_startup_errors off
+php_flag display_errors off
+php_flag html_errors off
+
+# enable PHP error logging
+php_flag  log_errors on
+php_value error_log  /opt/iou/data/Logs/php_errors.txt

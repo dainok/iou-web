@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml' lang='en'>
+<head>
+	<title>IOU Web Interface - Downloads</title>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+	<meta name='keywords' content='IOU, IOL, Web Interface, CCIE' />
+	<meta name='description' content='IOU Web Interface gives you the flexibility you need to use Cisco IOU.' />
+	<meta http-equiv='Content-Language' content='en'>
+	<script type='text/javascript'>
+		_editor_url  = '/xinha/'   // (preferably absolute) URL (including trailing slash) where Xinha is installed
+		_editor_lang = 'en';       // And the language we need to use in the editor.
+		_editor_skin = 'silva';    // If you want use a skin, add the name (of the folder) here
+		_editor_icons = 'Classic'; // If you want to use a different iconset, add the name (of the folder, under the `iconsets` folder) here
+	</script>
+	<script type='text/javascript' src='/xinha/XinhaCore.js'></script>
+	<script type='text/javascript' src='/xinha/XinhaConfig.js'></script>
+	<script type='text/javascript' src='/js/jquery-1.8.2.min.js'></script>
+	<script type='text/javascript' src='/js/jquery-ui-1.8.24.custom.min.js'></script>
+	<script type='text/javascript' src='/js/jquery.contextmenu.js'></script>
+	<script type='text/javascript' src='/js/jquery.validate.js'></script>
+	<script type='text/javascript' src='/js/iou-web.js'></script>
+	<link rel='stylesheet' type='text/css' href='/css/black-tie/jquery-ui-1.8.24.custom.css' />
+	<link rel='stylesheet' type='text/css' href='/css/jquery.contextmenu.css' />
+	<link rel='stylesheet' type='text/css' href='/css/iou-web.css' />
+</head>
+<body>
+<div id="dialog"></div>
+<div id='menu' class='ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all'>
+	<ul>
+		<li class="">
+			<a href='/laboratories.php'>Laboratories</a>
+		</li>
+		<li class="">
+			<a href='/manage.php'>Manage</a>
+		</li>
+<!-- TODO
+		<li class="">
+			<a href='/monitor.php'>Monitor</a>
+		</li>
+-->
+		<li class="selected">
+			<a href='/downloads/'>Downloads</a>
+		</li>
+	</ul>
+</div>
+<script type='text/javascript'><!--
+	$(document).ready(function() {
+		$('#clearFiles').click(function() {
+			var clear_url = '/ajax_helper.php?action=clear';
+			$('#dialog').attr('title', 'Confirm deletion');
+			$('#dialog').html('Are you sure you want to clear session and delete sniffer/import/export files?<br/>A "Yes" will <strong>delete</strong> all temporary/configs files and will <strong>reboot</strong> the VM.<br/>A "No" will delete sniffer files only (<strong>suggested</strong>).');
+			$('#dialog').dialog({
+				modal: true, 
+				show: 'fade', 
+				hide: 'fade',
+				resizable: false,
+				buttons: {
+					'Yes, delete all': function() {
+						$.get(clear_url + '&files=all');
+						$(this).dialog('destroy');
+						
+						$('#dialog').attr('Rebooting');
+						$('#dialog').html('System is rebooting, page will refresh in 30 seconds.');
+						$('#dialog').dialog({
+							modal: true,
+							show: 'fade',
+							hide: 'fade',
+							resizable: false,
+						});
+						setTimeout(function(){
+							$(this).dialog('destroy');
+							window.location = ('/');
+						}, 30000);
+						
+					},
+					'No, sniffer files only': function() {
+						$.get(clear_url + '&files=sniffer');
+						setTimeout(function(){
+							$(this).dialog('destroy');
+							location.reload();
+						}, 500);
+					}
+				}
+			});
+		});
+	});
+--></script>
+<div class='block'>
+	<div class='ui-tabs ui-widget ui-widget-content ui-corner-all'>
+		<div class='ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all'>
+			<h1 class='bar'>Downloads <a href='http://www.routereflector.com/en/cisco/cisco-iou-web-interface/downloads/' target='_blank'><img class="help" border='0' src='/images/buttons/help_small.png' width='16' height='16' title='Online Help' alt='Online Help' /></a></h1>
+		</div>
+		<div class='ui-tabs-panel ui-widget-content ui-corner-bottom'>
+			<p><a href='#' style="text-decoration: none" id='clearFiles'><img border='0' style="vertical-align: text-bottom" src='/images/buttons/wipe.png' width='16' height='16' title='Clear session and delete sniffer/import/export/logs files' alt='Clear session and delete sniffer/import/export/logs files' /> Clear session and delete sniffer/import/export/logs files.</a></p>
